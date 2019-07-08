@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 class Home extends React.Component {
   componentDidMount() {
-    if (!this.props.isAuthorized) {
+    if (!this.props.user.isAuthorized) {
       this.props.history.push("/login");
     }
   }

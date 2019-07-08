@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { userLogin } from "../../modules/user";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import styled from "@emotion/styled";
 
@@ -112,17 +112,21 @@ const LoginSchema = Yup.object().shape({
 });
 
 class LoginFormComponent extends React.Component {
+  handleSubmit = values => {
+    this.props.userLogin(values).then(() => {});
+  };
+
   render() {
-    return (
+    return this.props.user.isAuthorized ? (
+      <Redirect to="/" />
+    ) : (
       <Formik
         initialValues={{
           username: "",
           password: ""
         }}
         validationSchema={LoginSchema}
-        onSubmit={values => {
-          this.props.userLogin(values);
-        }}
+        onSubmit={this.handleSubmit}
       >
         {({ errors }) => (
           <FormStyled>

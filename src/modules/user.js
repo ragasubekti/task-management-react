@@ -43,47 +43,52 @@ export default (state = initialState, action) => {
   }
 };
 
-export const userLogin = ({ username, password }) => async dispatch => {
-  dispatch({
-    type: LOGIN
-  });
-
-  try {
-    const response = await axios.post(`${APP_HOST}/login`, {
-      username,
-      password
+export const userLogin = ({ username, password }) => dispatch =>
+  new Promise(async (resolve, reject) => {
+    dispatch({
+      type: LOGIN
     });
 
-    const result = response.data;
-
-    console.log(response);
-
-    if (result && result.token) {
-      localStorage.setItem("USER_AUTH_TOKEN", result.token);
-
-      const decoded = decode(result.token);
-
-      dispatch({
-        type: LOGIN_SUCCESS,
-        payload: {
-          token: result.token,
-          isManager: decoded.isManager
-        }
+    try {
+      const response = await axios.post(`${APP_HOST}/login`, {
+        username,
+        password
       });
-    } else {
+
+      const result = response.data;
+
+      if (result && result.token) {
+        localStorage.setItem("USER_AUTH_TOKEN", result.token);
+
+        const decoded = decode(result.token);
+
+        dispatch({
+          type: LOGIN_SUCCESS,
+          payload: {
+            token: result.token,
+            isManager: decoded.isManager
+          }
+        });
+
+        resolve();
+      } else {
+        dispatch({
+          type: LOGIN_FAIL,
+          payload: {
+            message: result ? result.message : "Unknown Error"
+          }
+        });
+
+        reject();
+      }
+    } catch (e) {
       dispatch({
         type: LOGIN_FAIL,
         payload: {
-          message: result ? result.message : "Unknown Error"
+          message: e.response && e.response.data.message
         }
       });
+
+      reject();
     }
-  } catch (e) {
-    dispatch({
-      type: LOGIN_FAIL,
-      payload: {
-        message: e.response && e.response.data.message
-      }
-    });
-  }
-};
+  });
