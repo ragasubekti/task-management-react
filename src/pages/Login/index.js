@@ -7,18 +7,20 @@ const LoginPageWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: #fff;
+  /* border: 1px solid #ccc; */
 
   min-height: 100vh;
   height: 100%;
 
-  width: 100vw;
+  /* width: 100vw; */
 `;
 
 export default class Login extends React.Component {
   render() {
     return (
       <LoginPageWrapper>
-        <h1>Login</h1>
+        Task Management Login
         <LoginForm />
       </LoginPageWrapper>
     );

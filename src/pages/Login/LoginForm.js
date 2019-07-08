@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { userLogin } from "../../modules/user";
+import { Link } from "react-router-dom";
 
 import styled from "@emotion/styled";
 
@@ -27,7 +28,6 @@ const FieldStyled = styled(Field)`
 
   &::placeholder {
     font-style: italic;
-    /* padding: */
   }
 `;
 
@@ -64,6 +64,39 @@ const LoginButton = styled.button`
   }
 `;
 
+export const RegisterLink = styled(Link)`
+  padding: 20px 40px;
+
+  background: #56ccf2;
+
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  box-shadow: 0px 10px 25px 5px rgba(47, 128, 237, 0.25);
+  transition: 0.5s;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin: 0;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+
+  &:hover {
+    transition: 0.5s;
+    box-shadow: 0px 10px 25px 5px rgba(47, 128, 237, 0.5);
+  }
+
+  &:disabled {
+    transition: 0.5s;
+    background: #ccc;
+    box-shadow: none;
+    color: grey;
+  }
+`;
+
 const ErrorMessageBox = styled.div`
   padding: 20px;
   border-radius: 5px;
@@ -78,6 +111,62 @@ const LoginSchema = Yup.object().shape({
   password: Yup.string().required("Password is required")
 });
 
+class LoginFormComponent extends React.Component {
+  render() {
+    return (
+      <Formik
+        initialValues={{
+          username: "",
+          password: ""
+        }}
+        validationSchema={LoginSchema}
+        onSubmit={values => {
+          this.props.userLogin(values);
+        }}
+      >
+        {({ errors }) => (
+          <FormStyled>
+            {this.props.user.hasError && (
+              <ErrorMessageBox>
+                <b style={{ fontSize: "small" }}>Oops, there's an error!</b>
+                <br />
+                {this.props.user.errorMessage}
+              </ErrorMessageBox>
+            )}
+            <FieldStyled type="text" name="username" placeholder="Username" />
+            <ErrorMessageStyled name="username" component="div" />
+            <FieldStyled
+              type="password"
+              name="password"
+              placeholder="Password"
+            />
+            <ErrorMessageStyled name="password" component="div" />
+            <LoginButton
+              type="submit"
+              disabled={
+                this.props.user.isLoading || errors.username || errors.password
+              }
+            >
+              {!this.props.user.isLoading ? "Login" : "Please Wait..."}
+            </LoginButton>
+            <div
+              style={{
+                display: "flex",
+                margin: "20px",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              Don't have an account?
+            </div>
+            <RegisterLink to="/register">Register</RegisterLink>
+          </FormStyled>
+        )}
+      </Formik>
+    );
+  }
+}
+
 const mapStateToProps = state => ({
   user: state.user
 });
@@ -88,37 +177,4 @@ const mapDispatchToProps = dispatch =>
 export const LoginForm = connect(
   mapStateToProps,
   mapDispatchToProps
-)(props => (
-  <Formik
-    initialValues={{
-      username: "",
-      password: ""
-    }}
-    validationSchema={LoginSchema}
-    onSubmit={(values, { setSubmitting }) => {
-      props.userLogin(values);
-    }}
-  >
-    {({ errors }) => (
-      <FormStyled>
-        {props.user.hasError && (
-          <ErrorMessageBox>
-            <b style={{ fontSize: "small" }}>Oops, there's an error!</b>
-            <br />
-            {props.user.errorMessage}
-          </ErrorMessageBox>
-        )}
-        <FieldStyled type="text" name="username" placeholder="Username" />
-        <ErrorMessageStyled name="username" component="div" />
-        <FieldStyled type="password" name="password" placeholder="Password" />
-        <ErrorMessageStyled name="password" component="div" />
-        <LoginButton
-          type="submit"
-          disabled={props.user.isLoading || errors.username || errors.password}
-        >
-          {!props.user.isLoading ? "Login" : "Please Wait..."}
-        </LoginButton>
-      </FormStyled>
-    )}
-  </Formik>
-));
+)(LoginFormComponent);
