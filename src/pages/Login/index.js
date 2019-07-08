@@ -1,5 +1,5 @@
 import React from "react";
-import { LoginForm } from "./Login/LoginForm";
+import { LoginForm } from "./LoginForm";
 import styled from "@emotion/styled";
 
 const LoginPageWrapper = styled.div`

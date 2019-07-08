@@ -1,6 +1,9 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { userLogin } from "../../modules/user";
 
 import styled from "@emotion/styled";
 
@@ -61,13 +64,31 @@ const LoginButton = styled.button`
   }
 `;
 
+const ErrorMessageBox = styled.div`
+  padding: 20px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #bc4e9c, #f80759);
+  box-shadow: 0px 10px 25px 5px rgba(248, 7, 89, 0.25);
+  color: #fff;
+`;
+
 /** Validation Schema */
 const LoginSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
   password: Yup.string().required("Password is required")
 });
 
-export const LoginForm = () => (
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ userLogin }, dispatch);
+
+export const LoginForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(props => (
   <Formik
     initialValues={{
       username: "",
@@ -75,26 +96,29 @@ export const LoginForm = () => (
     }}
     validationSchema={LoginSchema}
     onSubmit={(values, { setSubmitting }) => {
-      setTimeout(() => {
-        alert(JSON.stringify(values, null, 2));
-        setSubmitting(false);
-      }, 400);
-      console.log(values);
+      props.userLogin(values);
     }}
   >
-    {({ isSubmitting, errors }) => (
+    {({ errors }) => (
       <FormStyled>
+        {props.user.hasError && (
+          <ErrorMessageBox>
+            <b style={{ fontSize: "small" }}>Oops, there's an error!</b>
+            <br />
+            {props.user.errorMessage}
+          </ErrorMessageBox>
+        )}
         <FieldStyled type="text" name="username" placeholder="Username" />
         <ErrorMessageStyled name="username" component="div" />
         <FieldStyled type="password" name="password" placeholder="Password" />
         <ErrorMessageStyled name="password" component="div" />
         <LoginButton
           type="submit"
-          disabled={isSubmitting || errors.username || errors.password}
+          disabled={props.user.isLoading || errors.username || errors.password}
         >
-          {!isSubmitting ? "Submit" : "Please Wait..."}
+          {!props.user.isLoading ? "Login" : "Please Wait..."}
         </LoginButton>
       </FormStyled>
     )}
   </Formik>
-);
+));
