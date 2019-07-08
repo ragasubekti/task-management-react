@@ -20,7 +20,7 @@ export default class Login extends React.Component {
   render() {
     return (
       <LoginPageWrapper>
-        Task Management Login
+        <h2>Task Management Login</h2>
         <LoginForm />
       </LoginPageWrapper>
     );
