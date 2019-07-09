@@ -9,12 +9,4 @@ const reducers = combineReducers({
   task
 });
 
-export default createStore(
-  reducers,
-  compose(
-    applyMiddleware(thunk),
-    process.env.NODE_ENV !== "production" &&
-      window.__REDUX_DEVTOOLS_EXTENSION__ &&
-      window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
-);
+export default createStore(reducers, compose(applyMiddleware(thunk)));
