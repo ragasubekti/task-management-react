@@ -1,5 +1,6 @@
 import axios from "axios";
 import { APP_HOST } from "../../constant";
+import { moment } from "moment";
 
 export const GET_TASK = "@task/GET_TASK";
 export const GET_TASK_SUCCESS = "@task/GET_TASK_SUCCESS";
@@ -16,6 +17,10 @@ export const COMPLETE_TASK_FAIL = "@task/COMPLETE_TASK_FAIL";
 export const DELETE_TASK = "@task/DELETE_TASK";
 export const DELETE_TASK_SUCCESS = "@task/DELETE_TASK_SUCCESS";
 export const DELETE_TASK_FAIL = "@task/DELETE_TASK_FAIL";
+
+export const UPDATE_TASK = "@task/UPDATE_TASK";
+export const UPDATE_TASK_SUCCESS = "@task/UPDATE_TASK_SUCCESS";
+export const UPDATE_TASK_FAIL = "@task/UPDATE_TASK_FAIL";
 
 export const submitTask = task => dispatch =>
   new Promise(async resolve => {
@@ -121,6 +126,41 @@ export const deleteTask = id => dispatch =>
     } catch (e) {
       dispatch({
         type: DELETE_TASK_FAIL,
+        payload: {
+          message: e.response.data.message || "Unknown Error"
+        }
+      });
+      reject();
+    }
+  });
+
+export const updateTask = (id, data) => dispatch =>
+  new Promise(async (resolve, reject) => {
+    dispatch({
+      type: UPDATE_TASK
+    });
+
+    try {
+      await axios.put(
+        `${APP_HOST}/task/${id}`,
+        {
+          ...data,
+          dueDate: data.dueDate.toISOString() || moment().toISOString()
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("USER_AUTH_TOKEN")}`
+          }
+        }
+      );
+
+      dispatch({
+        type: UPDATE_TASK_SUCCESS
+      });
+      resolve();
+    } catch (e) {
+      dispatch({
+        type: UPDATE_TASK_FAIL,
         payload: {
           message: e.response.data.message || "Unknown Error"
         }

@@ -1,15 +1,25 @@
 import React from "react";
-import { connect } from "react-redux";
-import { Table, Modal, message, Popconfirm } from "antd";
 import styled from "@emotion/styled";
 import moment from "moment";
-import { CreateTaskButton } from "./CreateTask";
+
+import { connect } from "react-redux";
+import { Table, Modal, message, Popconfirm, DatePicker } from "antd";
+
 import {
   completeTask,
   getTaskList,
-  deleteTask
+  deleteTask,
+  updateTask
 } from "../../modules/task/actions";
+
 import { bindActionCreators } from "redux";
+import { Formik, Form } from "formik";
+import {
+  CreateTaskButton,
+  FieldWrapper,
+  FieldStyled,
+  FlatButton
+} from "./CreateTask";
 
 const { Column } = Table;
 
@@ -34,6 +44,7 @@ const DetailButton = styled.button`
 class TaskList extends React.Component {
   state = {
     isDetailVisible: false,
+    isEditVisible: false,
     selectedDetail: {}
   };
 
@@ -129,7 +140,14 @@ class TaskList extends React.Component {
                 )}
                 {!this.props.user.isManager && (
                   <React.Fragment>
-                    <DetailButton>
+                    <DetailButton
+                      onClick={() => {
+                        this.setState({
+                          isEditVisible: true,
+                          selectedDetail: r
+                        });
+                      }}
+                    >
                       <i className="fa fa-pencil" />
                     </DetailButton>
                     <Popconfirm
@@ -208,6 +226,91 @@ class TaskList extends React.Component {
             </tr>
           </table>
         </Modal>
+
+        <Modal
+          title="Edit Task"
+          visible={this.state.isEditVisible}
+          footer={null}
+        >
+          <Formik
+            initialValues={{
+              ...this.state.selectedDetail,
+              dueDate: moment(this.state.selectedDetail.dueDate)
+            }}
+            enableReinitialize
+            onSubmit={val => {
+              this.props
+                .updateTask(this.state.selectedDetail._id, val)
+                .then(() => {
+                  message.success("Successfully Updated Task");
+                  this.setState({
+                    isEditVisible: false
+                  });
+                  this.props.getTaskList();
+                })
+                .catch(() => {
+                  message.error(
+                    this.props.task.update.errorMessage ||
+                      "Unknown Error has Occured"
+                  );
+                });
+            }}
+          >
+            {({ errors, setFieldValue, values }) => (
+              <Form>
+                <FieldWrapper>
+                  <label>Name</label>
+                  <FieldStyled placeholder="Name" name="name" />
+                </FieldWrapper>
+                <FieldWrapper>
+                  <label>Description</label>
+                  <FieldStyled
+                    placeholder="Description"
+                    name="description"
+                    component="textarea"
+                  />
+                </FieldWrapper>
+                <FieldWrapper>
+                  <label>Due Date</label>
+                  <DatePicker
+                    format="DD MMMM YYYY"
+                    style={{
+                      display: "block"
+                    }}
+                    onChange={(date, dateString) =>
+                      setFieldValue("dueDate", date)
+                    }
+                    value={values.dueDate}
+                  />
+                </FieldWrapper>
+                <div className="mt-4">
+                  <FlatButton
+                    className="mr-2"
+                    style={{
+                      padding: "6px 15px"
+                    }}
+                    onClick={e => {
+                      e.preventDefault();
+                      this.setState({
+                        isEditVisible: false
+                      });
+                    }}
+                  >
+                    Cancel
+                  </FlatButton>
+                  <CreateTaskButton
+                    style={{
+                      padding: "6px 15px"
+                    }}
+                    disabled={this.props.task.isLoading}
+                  >
+                    {this.props.task.isLoading ? "Please Wait..." : "Update"}
+                  </CreateTaskButton>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </Modal>
       </React.Fragment>
     );
   }
@@ -223,7 +326,8 @@ const mapDispatchToProps = dispatch =>
     {
       completeTask,
       getTaskList,
-      deleteTask
+      deleteTask,
+      updateTask
     },
     dispatch
   );

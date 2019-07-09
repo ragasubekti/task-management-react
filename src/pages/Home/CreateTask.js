@@ -23,7 +23,7 @@ export const CreateTaskButton = styled.button`
   }
 `;
 
-const FlatButton = styled.button`
+export const FlatButton = styled.button`
   padding: 10px 20px;
   background: #fff;
   color: #333;
@@ -31,7 +31,7 @@ const FlatButton = styled.button`
   border-radius: 4px;
 `;
 
-const FieldWrapper = styled.div`
+export const FieldWrapper = styled.div`
   margin-bottom: 10px;
 
   label {
@@ -40,7 +40,7 @@ const FieldWrapper = styled.div`
   }
 `;
 
-const FieldStyled = styled(Field)`
+export const FieldStyled = styled(Field)`
   padding: 10px;
   width: 100%;
   display: block;

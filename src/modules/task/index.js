@@ -13,7 +13,10 @@ import {
   COMPLETE_TASK_FAIL,
   DELETE_TASK,
   DELETE_TASK_SUCCESS,
-  DELETE_TASK_FAIL
+  DELETE_TASK_FAIL,
+  UPDATE_TASK,
+  UPDATE_TASK_SUCCESS,
+  UPDATE_TASK_FAIL
 } from "./actions";
 
 const initialState = {
@@ -34,6 +37,11 @@ const initialState = {
     errorMessage: ""
   },
   deletion: {
+    isLoading: false,
+    hasError: false,
+    errorMessage: ""
+  },
+  update: {
     isLoading: false,
     hasError: false,
     errorMessage: ""
@@ -134,6 +142,31 @@ export default (state = initialState, action) => {
         ...state,
         deletion: {
           ...state.deletion,
+          isLoading: false
+        }
+      };
+    case UPDATE_TASK:
+      return {
+        ...state,
+        update: {
+          ...state.update,
+          isLoading: true,
+          hasError: false
+        }
+      };
+    case UPDATE_TASK_SUCCESS:
+      return {
+        ...state,
+        update: {
+          ...state.update,
+          isLoading: false
+        }
+      };
+    case UPDATE_TASK_FAIL:
+      return {
+        ...state,
+        update: {
+          ...state.update,
           isLoading: false
         }
       };
