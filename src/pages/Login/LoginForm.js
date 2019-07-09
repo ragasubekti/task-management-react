@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { userLogin } from "../../modules/user";
+import { userLogin } from "../../modules/user/actions";
 import { Link, Redirect } from "react-router-dom";
 
 import styled from "@emotion/styled";

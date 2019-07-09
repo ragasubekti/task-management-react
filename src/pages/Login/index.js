@@ -2,7 +2,7 @@ import React from "react";
 import { LoginForm } from "./LoginForm";
 import styled from "@emotion/styled";
 
-const LoginPageWrapper = styled.div`
+export const LoginPageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;

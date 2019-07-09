@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { recheckToken } from "../../modules/user";
+import { recheckToken } from "../../modules/user/actions";
 import { getTaskList } from "../../modules/task/actions";
 
 import { ProfileInfo } from "./ProfileInfo";

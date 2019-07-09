@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { logout } from "../modules/user";
+import { logout } from "../modules/user/actions";
 
 class LogoutComponent extends React.Component {
   componentDidMount() {
