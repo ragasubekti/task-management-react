@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
+import { hot } from "react-hot-loader/root";
 
 import Layout from "../layout";
 
@@ -8,7 +9,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Logout from "../pages/Logout";
 
-export default () => (
+export default hot(() => (
   <Layout>
     <BrowserRouter>
       <Route path="/" exact component={Home} />
@@ -17,4 +18,4 @@ export default () => (
       <Route path="/logout" component={Logout} />
     </BrowserRouter>
   </Layout>
-);
+));
