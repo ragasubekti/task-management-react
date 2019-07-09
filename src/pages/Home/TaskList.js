@@ -1,9 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Table, Modal } from "antd";
+import { Table, Modal, message, Popconfirm } from "antd";
 import styled from "@emotion/styled";
 import moment from "moment";
 import { CreateTaskButton } from "./CreateTask";
+import { completeTask, getTaskList } from "../../modules/task/actions";
+import { bindActionCreators } from "redux";
 
 const { Column } = Table;
 
@@ -18,6 +20,11 @@ const DetailButton = styled.button`
       : props.danger
       ? `linear-gradient(to bottom right, #da4453, #89216b);`
       : `linear-gradient(to bottom right, #f46b45, #eea849)`};
+
+  :disabled {
+    color: #333;
+    background: #ccc;
+  }
 `;
 
 class TaskList extends React.Component {
@@ -29,13 +36,29 @@ class TaskList extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Table dataSource={this.props.task.list.data}>
+        <Table
+          dataSource={this.props.task.list.data}
+          loading={
+            this.props.task.list.isLoading || this.props.task.complete.isLoading
+          }
+        >
           <Column title="Name" dataIndex="name" key="name" />
           <Column
             title="Due Date"
             dataIndex="dueDate"
             key="dueDate"
-            render={t => <span>{moment(t).format("DD MMMM YYYY")}</span>}
+            render={(dueDate, r) => (
+              <React.Fragment>
+                {moment(dueDate).diff(moment()) < 0 && !r.isCompleted ? (
+                  <span style={{ color: "red" }}>
+                    <span>{moment(dueDate).format("DD MMMM YYYY")}</span> -{" "}
+                    <b>OVERDUE</b>
+                  </span>
+                ) : (
+                  moment(dueDate).format("DD MMMM YYYY")
+                )}
+              </React.Fragment>
+            )}
           />
           <Column
             title="Completed"
@@ -76,8 +99,29 @@ class TaskList extends React.Component {
                   >
                     Detail
                   </DetailButton>
+                ) : !r.isCompleted ? (
+                  <Popconfirm
+                    title="Are you sure want to complete this task?"
+                    onConfirm={() => {
+                      this.props.completeTask(r._id).then(() => {
+                        message.success("Successfully Completed Task");
+                        this.props.getTaskList();
+                      });
+                    }}
+                    // onCancel={cancel}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <DetailButton
+                      primary
+                      onClick={() => {}}
+                      disabled={this.props.task.complete.isLoading}
+                    >
+                      Complete
+                    </DetailButton>
+                  </Popconfirm>
                 ) : (
-                  <DetailButton primary>Complete</DetailButton>
+                  ""
                 )}
                 {!this.props.user.isManager && (
                   <React.Fragment>
@@ -157,4 +201,16 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps)(TaskList);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      completeTask,
+      getTaskList
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TaskList);

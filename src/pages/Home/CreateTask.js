@@ -136,6 +136,9 @@ class CreateTask extends React.Component {
                     }}
                     onClick={e => {
                       e.preventDefault();
+                      this.setState({
+                        isVisible: false
+                      });
                     }}
                   >
                     Cancel

@@ -7,7 +7,10 @@ import {
   GET_TASK_FAIL,
   SUBMIT_TASK,
   SUBMIT_TASK_SUCCESS,
-  SUBMIT_TASK_FAIL
+  SUBMIT_TASK_FAIL,
+  COMPLETE_TASK,
+  COMPLETE_TASK_SUCCESS,
+  COMPLETE_TASK_FAIL
 } from "./actions";
 
 const initialState = {
@@ -18,6 +21,11 @@ const initialState = {
     errorMessage: ""
   },
   submit: {
+    isLoading: false,
+    hasError: false,
+    errorMessage: ""
+  },
+  complete: {
     isLoading: false,
     hasError: false,
     errorMessage: ""
@@ -71,8 +79,32 @@ export default (state = initialState, action) => {
           isLoading: false
         }
       };
+    case COMPLETE_TASK:
+      return {
+        ...state,
+        complete: {
+          ...state.complete,
+          isLoading: true,
+          hasError: false
+        }
+      };
+    case COMPLETE_TASK_SUCCESS:
+      return {
+        ...state,
+        complete: {
+          ...state.complete,
+          isLoading: false
+        }
+      };
+    case COMPLETE_TASK_FAIL:
+      return {
+        ...state,
+        complete: {
+          ...state.complete,
+          isLoading: false
+        }
+      };
     default:
       return state;
   }
 };
-

@@ -9,6 +9,10 @@ export const SUBMIT_TASK = "@task/SUBMIT_TASK";
 export const SUBMIT_TASK_SUCCESS = "@task/SUBMIT_TASK_SUCCESS";
 export const SUBMIT_TASK_FAIL = "@task/SUBMIT_TASK_FAIL";
 
+export const COMPLETE_TASK = "@task/COMPLETE_TASK";
+export const COMPLETE_TASK_SUCCESS = "@task/COMPLETE_TASK_SUCCESS";
+export const COMPLETE_TASK_FAIL = "@task/COMPLETE_TASK_FAIL";
+
 export const submitTask = task => dispatch =>
   new Promise(async resolve => {
     dispatch({
@@ -66,3 +70,29 @@ export const getTaskList = () => async dispatch => {
     });
   } catch (e) {}
 };
+
+export const completeTask = id => dispatch =>
+  new Promise(async (resolve, reject) => {
+    dispatch({
+      type: COMPLETE_TASK
+    });
+
+    try {
+      await axios.put(
+        `${APP_HOST}/task/${id}/complete`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("USER_AUTH_TOKEN")}`
+          }
+        }
+      );
+
+      dispatch({
+        type: COMPLETE_TASK_SUCCESS
+      });
+      resolve();
+    } catch (e) {
+      reject();
+    }
+  });
