@@ -10,7 +10,10 @@ import {
   SUBMIT_TASK_FAIL,
   COMPLETE_TASK,
   COMPLETE_TASK_SUCCESS,
-  COMPLETE_TASK_FAIL
+  COMPLETE_TASK_FAIL,
+  DELETE_TASK,
+  DELETE_TASK_SUCCESS,
+  DELETE_TASK_FAIL
 } from "./actions";
 
 const initialState = {
@@ -26,6 +29,11 @@ const initialState = {
     errorMessage: ""
   },
   complete: {
+    isLoading: false,
+    hasError: false,
+    errorMessage: ""
+  },
+  deletion: {
     isLoading: false,
     hasError: false,
     errorMessage: ""
@@ -101,6 +109,31 @@ export default (state = initialState, action) => {
         ...state,
         complete: {
           ...state.complete,
+          isLoading: false
+        }
+      };
+    case DELETE_TASK:
+      return {
+        ...state,
+        deletion: {
+          ...state.deletion,
+          isLoading: true,
+          hasError: false
+        }
+      };
+    case DELETE_TASK_SUCCESS:
+      return {
+        ...state,
+        deletion: {
+          ...state.deletion,
+          isLoading: false
+        }
+      };
+    case DELETE_TASK_FAIL:
+      return {
+        ...state,
+        deletion: {
+          ...state.deletion,
           isLoading: false
         }
       };

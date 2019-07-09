@@ -4,7 +4,11 @@ import { Table, Modal, message, Popconfirm } from "antd";
 import styled from "@emotion/styled";
 import moment from "moment";
 import { CreateTaskButton } from "./CreateTask";
-import { completeTask, getTaskList } from "../../modules/task/actions";
+import {
+  completeTask,
+  getTaskList,
+  deleteTask
+} from "../../modules/task/actions";
 import { bindActionCreators } from "redux";
 
 const { Column } = Table;
@@ -128,9 +132,22 @@ class TaskList extends React.Component {
                     <DetailButton>
                       <i className="fa fa-pencil" />
                     </DetailButton>
-                    <DetailButton danger>
-                      <i className="fa fa-trash" />
-                    </DetailButton>
+                    <Popconfirm
+                      title="Are you sure want to delete this task?"
+                      onConfirm={() => {
+                        this.props.deleteTask(r._id).then(() => {
+                          message.success("Successfully Deleted Task");
+                          this.props.getTaskList();
+                        });
+                      }}
+                      // onCancel={cancel}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <DetailButton danger>
+                        <i className="fa fa-trash" />
+                      </DetailButton>
+                    </Popconfirm>
                   </React.Fragment>
                 )}
               </div>
@@ -205,7 +222,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       completeTask,
-      getTaskList
+      getTaskList,
+      deleteTask
     },
     dispatch
   );

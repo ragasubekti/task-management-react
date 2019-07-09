@@ -13,6 +13,10 @@ export const COMPLETE_TASK = "@task/COMPLETE_TASK";
 export const COMPLETE_TASK_SUCCESS = "@task/COMPLETE_TASK_SUCCESS";
 export const COMPLETE_TASK_FAIL = "@task/COMPLETE_TASK_FAIL";
 
+export const DELETE_TASK = "@task/DELETE_TASK";
+export const DELETE_TASK_SUCCESS = "@task/DELETE_TASK_SUCCESS";
+export const DELETE_TASK_FAIL = "@task/DELETE_TASK_FAIL";
+
 export const submitTask = task => dispatch =>
   new Promise(async resolve => {
     dispatch({
@@ -93,6 +97,34 @@ export const completeTask = id => dispatch =>
       });
       resolve();
     } catch (e) {
+      reject();
+    }
+  });
+
+export const deleteTask = id => dispatch =>
+  new Promise(async (resolve, reject) => {
+    dispatch({
+      type: DELETE_TASK
+    });
+
+    try {
+      await axios.delete(`${APP_HOST}/task/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("USER_AUTH_TOKEN")}`
+        }
+      });
+
+      dispatch({
+        type: DELETE_TASK_SUCCESS
+      });
+      resolve();
+    } catch (e) {
+      dispatch({
+        type: DELETE_TASK_FAIL,
+        payload: {
+          message: e.response.data.message || "Unknown Error"
+        }
+      });
       reject();
     }
   });
