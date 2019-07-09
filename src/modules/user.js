@@ -2,8 +2,6 @@ import axios from "axios";
 import decode from "jwt-decode";
 import { APP_HOST } from "../constant";
 
-export const SET_TOKEN = "@user/SET_TOKEN";
-
 export const LOGIN = "@user/LOGIN";
 export const LOGIN_SUCCESS = "@user/LOGIN_SUCCESS";
 export const LOGIN_FAIL = "@user/LOGIN_FAIL";
@@ -42,6 +40,23 @@ export default (state = initialState, action) => {
       return state;
   }
 };
+
+export const recheckToken = () => dispatch =>
+  new Promise(resolve => {
+    const token = localStorage.getItem("USER_AUTH_TOKEN");
+    if (token) {
+      const decoded = decode(token);
+
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: {
+          token: token,
+          isManager: decoded.isManager
+        }
+      });
+    }
+    resolve();
+  });
 
 export const userLogin = ({ username, password }) => dispatch =>
   new Promise(async (resolve, reject) => {
