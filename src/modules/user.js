@@ -6,10 +6,13 @@ export const LOGIN = "@user/LOGIN";
 export const LOGIN_SUCCESS = "@user/LOGIN_SUCCESS";
 export const LOGIN_FAIL = "@user/LOGIN_FAIL";
 
+export const LOGOUT = "@user/LOGOUT";
+
 const initialState = {
   isAuthorized: false,
   isManager: false,
   token: "",
+  name: "",
   hasError: false,
   errorMessage: ""
 };
@@ -27,7 +30,8 @@ export default (state = initialState, action) => {
         token: action.payload.token,
         isLoading: false,
         isAuthorized: true,
-        isManager: action.payload.isManager
+        isManager: action.payload.isManager,
+        name: action.payload.name
       };
     case LOGIN_FAIL:
       return {
@@ -36,10 +40,31 @@ export default (state = initialState, action) => {
         hasError: true,
         errorMessage: action.payload.message
       };
+    case LOGOUT:
+      return {
+        ...state,
+        isAuthorized: false,
+        isManager: false,
+        token: "",
+        name: "",
+        hasError: false,
+        errorMessage: ""
+      };
     default:
       return state;
   }
 };
+
+export const logout = () => dispatch =>
+  new Promise(resolve => {
+    dispatch({
+      type: LOGOUT
+    });
+
+    localStorage.clear();
+
+    resolve();
+  });
 
 export const recheckToken = () => dispatch =>
   new Promise(resolve => {
@@ -51,7 +76,8 @@ export const recheckToken = () => dispatch =>
         type: LOGIN_SUCCESS,
         payload: {
           token: token,
-          isManager: decoded.isManager
+          isManager: decoded.isManager,
+          name: decoded.name
         }
       });
     }
@@ -81,7 +107,8 @@ export const userLogin = ({ username, password }) => dispatch =>
           type: LOGIN_SUCCESS,
           payload: {
             token: result.token,
-            isManager: decoded.isManager
+            isManager: decoded.isManager,
+            name: decoded.name
           }
         });
 

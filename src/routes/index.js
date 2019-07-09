@@ -6,6 +6,7 @@ import Layout from "../layout";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import Logout from "../pages/Logout";
 
 export default () => (
   <Layout>
@@ -13,6 +14,7 @@ export default () => (
       <Route path="/" exact component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/logout" component={Logout} />
     </BrowserRouter>
   </Layout>
 );

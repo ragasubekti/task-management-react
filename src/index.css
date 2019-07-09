@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Merriweather|Product+Sans&display=swap");
+@import "~bootstrap/dist/css/bootstrap.min.css";
 
 body {
   font-family: "Product Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
